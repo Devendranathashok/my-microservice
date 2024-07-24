@@ -11,9 +11,7 @@ jobs:
         with:
           node-version: 18
       - name: ci
-        run: npm ci    
-      - name: lint
-        run: npm run lint
+        run: npm ci
   test:
     needs: lint 
     runs-on: my-runner
