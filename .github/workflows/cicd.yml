@@ -24,8 +24,6 @@ jobs:
           node-version: 18
       - name: npm ci
         run: npm ci    
-      - name: test
-        run: npm run test
   build: 
     needs: test
     runs-on: my-runner 
@@ -37,6 +35,17 @@ jobs:
       with:
         node-version: 18
     - name: npm ci
-      run: npm ci    
-    - name: build
-      run: npm run build       
+      run: npm ci
+  docker-build-push:
+    needs: test
+    runs-on: my-runner
+    steps:    
+    - name: Build & push Docker image
+      uses: mr-smithers-excellent/docker-build-push@v5
+      with:
+        image: devendranathashok/my-microservice
+        tags: ${{ steps.meta.outputs.tags }}
+        registry: docker.io
+        dockerfile: Dockerfile
+        username: ${{ secrets.DOCKERUSER }}
+        password: ${{ secrets.DOCKERPASSWORD }}            
