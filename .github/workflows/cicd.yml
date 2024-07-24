@@ -46,9 +46,18 @@ jobs:
       uses: mr-smithers-excellent/docker-build-push@v5
       with:
         image: devendranathashok/my-microservice
-        tags: ${{ steps.tag.outputs.tag }}
+        tags: ${{ github.sha }}
         #tags: ${{ env.hash }}
         registry: docker.io
         dockerfile: Dockerfile
         username: ${{ secrets.DOCKERUSER }}
-        password: ${{ secrets.DOCKERPASSWORD }}            
+        password: ${{ secrets.DOCKERPASSWORD }}
+    - name: Run Trivy vulnerability scanner  
+      uses: aquasecurity/trivy-action@0.20.0
+      with:
+        image-ref: 'devendranathashok/my-microservice:${{ github.sha }}'
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH,MEDIUM'             
