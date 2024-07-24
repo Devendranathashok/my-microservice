@@ -4,7 +4,10 @@
   "description": "Dockerizing a Node.js web app.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "dev": "vite",
+    "build": "vite build",
+    "start": "node index.js",
+    "test": "vitest run"
   },
   "author": {
     "name": "Safdar Jamal",
@@ -12,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/SafdarJamal/docker-node-app"
+    "url": "https://github.com/Devendranathashok/my-microservice.git"
   },
   "license": "MIT",
   "dependencies": {
