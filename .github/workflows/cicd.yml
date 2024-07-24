@@ -46,8 +46,8 @@ jobs:
       uses: mr-smithers-excellent/docker-build-push@v5
       with:
         image: devendranathashok/my-microservice
-       #tags: ${{ steps.meta.outputs.tags }}
-        tags: ${{ env.hash }}
+        tags: ${{ steps.tag.outputs.tag }}
+        #tags: ${{ env.hash }}
         registry: docker.io
         dockerfile: Dockerfile
         username: ${{ secrets.DOCKERUSER }}
