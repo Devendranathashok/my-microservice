@@ -87,7 +87,6 @@ jobs:
         cd $CD_CHART_REPO
         docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.2.1 yq write --inplace --verbose $CD_MANIFEST_FILE image.tag ${{ github.sha }}
         cat values.yaml
-        git remote remove origin
         git add values.yaml
         git commit -am "update image tag"
         git push https://${{ secrets.GH_PAT }}@github.com/devendranathashok/my-helmcharts.git
