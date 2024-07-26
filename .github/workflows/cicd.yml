@@ -3,7 +3,7 @@ on: push
 env:
   CD_GIT_REPOSITORY: https://github.com/Devendranathashok/my-helmcharts.git
   CD_MANIFEST_FILE: values.yml
-  CD_CHART_REPO: my-microservice
+  CD_CHART_REPO: my-helmcharts/my-microservice
 jobs:
   lint:
     runs-on: my-runner
