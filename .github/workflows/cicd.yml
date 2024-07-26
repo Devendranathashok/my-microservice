@@ -1,5 +1,9 @@
 name: github-actions-2
 on: push
+env:
+  CD_GIT_REPOSITORY: https://github.com/Devendranathashok/my-helmcharts.git
+  CD_MANIFEST_FILE: values.yml
+  CD_CHART_REPO: my-microservice
 jobs:
   lint:
     runs-on: my-runner
@@ -52,22 +56,43 @@ jobs:
         dockerfile: Dockerfile
         username: ${{ secrets.DOCKERUSER }}
         password: ${{ secrets.DOCKERPASSWORD }}
-  Security:
+  # Security:
+  #   needs: docker-build-push
+  #   runs-on: my-runner
+  #   steps:
+  #   - name: pull docker image
+  #     run: |
+  #         docker login -u ${{ secrets.DOCKERUSER }} -p ${{ secrets.DOCKERPASSWORD }}
+  #         docker pull devendranathashok/my-microservice:${{ github.sha }}'
+  #   - name: Run Trivy vulnerability scanner
+  #     uses: aquasecurity/trivy-action@0.20.0
+  #     with:
+  #       image-ref: 'devendranathashok/my-microservice:${{ github.sha }}'
+  #       format: 'sarif'
+  #       output: 'trivy-results.sarif'
+  #   - name: Upload Trivy scan results to GitHub Security tab
+  #     uses: github/codeql-action/upload-sarif@v2
+  #     if: always()
+  #     with:
+  #       sarif_file: 'trivy-results.sarif'  
+  Deploy_to_k8s:
     needs: docker-build-push
     runs-on: my-runner
     steps:
-    - name: pull docker image
+    - name: clone helm repo
       run: |
-          docker login -u ${{ secrets.DOCKERUSER }} -p ${{ secrets.DOCKERPASSWORD }}
-          docker pull devendranathashok/my-microservice:${{ github.sha }}'
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@0.20.0
-      with:
-        image-ref: 'devendranathashok/my-microservice:${{ github.sha }}'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'             
+        git config --global user.email "ashok.kammala@gmail.com"
+        git config --global user.name "devendranathashok"
+        git clone --single-branch --branch master $CD_GIT_REPOSITORY
+        cd $CD_CHART_REPO
+        docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.2.1 yq write --inplace --verbose $CD_MANIFEST_FILE image.tag ${{ github.sha }}
+        cat values.yaml
+        git remote remove origin
+        git remote add origin https://${{ secrets.GH_PAT }}@github.com/devendranathashok/$CD_GIT_REPOSITORY
+        git add values.yaml
+        git commit -am "update image tag" && git push origin master
+
+
+
+
+
