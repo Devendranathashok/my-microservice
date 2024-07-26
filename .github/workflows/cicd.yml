@@ -2,7 +2,7 @@ name: github-actions-2
 on: push
 env:
   CD_GIT_REPOSITORY: https://github.com/Devendranathashok/my-helmcharts.git
-  CD_MANIFEST_FILE: values.yml
+  CD_MANIFEST_FILE: values.yaml
   CD_CHART_REPO: my-helmcharts/my-microservice
 jobs:
   lint:
