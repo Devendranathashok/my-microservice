@@ -82,7 +82,7 @@ jobs:
     - name: clone helm repo
       run: |
         echo ${{ secrets.SSH_PRIVATE_KEY }} > /root/.ssh/id_rsa
-        cat /root/.ssh/id_rsa
+        chmod 600 /root/.ssh/id_rsa
         git config --global user.email "ashok.kammala@gmail.com"
         git config --global user.name "devendranathashok"
         git clone --single-branch --branch master $CD_GIT_REPOSITORY
@@ -92,9 +92,3 @@ jobs:
         git add values.yaml
         git commit -am "update image tag"
         git push origin master
-
-
-
-
-
-
