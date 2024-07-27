@@ -89,7 +89,7 @@ jobs:
         run: |  
           cd my-helmcharts/my-microservice
           ls -lrt
-          docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.2.1 yq write --inplace --verbose $CD_MANIFEST_FILE image.tag ${{ github.sha }}
+          docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.2.1 yq write --inplace --verbose my-helmcharts/my-microservice/$CD_MANIFEST_FILE image.tag ${{ github.sha }}
           git config user.name "devendranathashok"
           git config user.email "ashok.kammala@gmail.com"
           git add .
