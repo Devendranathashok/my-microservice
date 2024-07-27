@@ -79,16 +79,23 @@ jobs:
     needs: docker-build-push
     runs-on: my-runner
     steps:
-    - name: clone helm repo
-      run: |
-        echo ${{ secrets.SSH_PRIVATE_KEY }} > /root/.ssh/id_rsa
-        chmod 600 /root/.ssh/id_rsa
-        git config --global user.email "ashok.kammala@gmail.com"
-        git config --global user.name "devendranathashok"
-        git clone --single-branch --branch master $CD_GIT_REPOSITORY
-        cd $CD_CHART_REPO
-        docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.2.1 yq write --inplace --verbose $CD_MANIFEST_FILE image.tag ${{ github.sha }}
-        cat values.yaml
-        git add values.yaml
-        git commit -am "update image tag"
-        git push origin master
+      - name: Checkout Repository B
+        uses: actions/checkout@v3
+        with:
+          repository: devendranathashok/my-helmcharts 
+          token: ${{ secrets.GH_PAT }}
+          path: my-helmcharts/my-microservice
+      - name: Modify Helm Charts
+        run: |
+          cd my-helmcharts/my-microservice
+          docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.2.1 yq write --inplace --verbose $CD_MANIFEST_FILE image.tag ${{ github.sha }}
+      - name: Commit and Push Changes
+        run: |
+          cd repo-b
+          git config user.name "devendranathashok"
+          git config user.email "ashok@gmail.com"
+          git add .
+          git commit -m "Update Helm charts"
+          git push          
+
+           
