@@ -81,12 +81,14 @@ jobs:
     steps:
     - name: clone helm repo
       run: |
+        apt-get install git-credential-manager-core
         git config --global user.email "ashok.kammala@gmail.com"
         git config --global user.name "devendranathashok"
         git clone --single-branch --branch master $CD_GIT_REPOSITORY
         cd $CD_CHART_REPO
         docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.2.1 yq write --inplace --verbose $CD_MANIFEST_FILE image.tag ${{ github.sha }}
         cat values.yaml
+        echo "https://${{ secrets.GH_PAT }}@github.com/devendranathashok/my-helmcharts.git" > ~/.git-credentials
         git remote set-url origin https://${{ secrets.GH_PAT }}@github.com/devendranathashok/my-helmcharts.git
         git add values.yaml
         git commit -am "update image tag"
