@@ -81,7 +81,7 @@ jobs:
     steps:
     - name: clone helm repo
       run: |
-        sudo apt install git-credential-manager-core
+        sudo apt-get install git-credential-manager-core
         git config --global user.email "ashok.kammala@gmail.com"
         git config --global user.name "devendranathashok"
         git clone --single-branch --branch master $CD_GIT_REPOSITORY
