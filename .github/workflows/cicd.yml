@@ -56,27 +56,26 @@ jobs:
         dockerfile: Dockerfile
         username: ${{ secrets.DOCKERUSER }}
         password: ${{ secrets.DOCKERPASSWORD }}
-  # Security:
-  #   needs: docker-build-push
-  #   runs-on: my-runner
-  #   steps:
-  #   - name: pull docker image
-  #     run: |
-  #         docker login -u ${{ secrets.DOCKERUSER }} -p ${{ secrets.DOCKERPASSWORD }}
-  #         docker pull devendranathashok/my-microservice:${{ github.sha }}'
-  #   - name: Run Trivy vulnerability scanner
-  #     uses: aquasecurity/trivy-action@0.20.0
-  #     with:
-  #       image-ref: 'devendranathashok/my-microservice:${{ github.sha }}'
-  #       format: 'sarif'
-  #       output: 'trivy-results.sarif'
-  #   - name: Upload Trivy scan results to GitHub Security tab
-  #     uses: github/codeql-action/upload-sarif@v2
-  #     if: always()
-  #     with:
-  #       sarif_file: 'trivy-results.sarif'  
-  Deploy_to_k8s:
+  Security:
     needs: docker-build-push
+    runs-on: my-runner
+    steps:
+    - name: pull docker image
+      run: |
+          docker login -u ${{ secrets.DOCKERUSER }} -p ${{ secrets.DOCKERPASSWORD }}
+          docker pull devendranathashok/my-microservice:${{ github.sha }}'
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@0.20.0
+      with:
+        image-ref: 'devendranathashok/my-microservice:${{ github.sha }}'
+        format: 'table'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
+  Deploy_to_k8s:
+    needs: Security
     runs-on: my-runner
     steps:
       - name: Checkout Repository B
