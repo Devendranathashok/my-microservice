@@ -49,7 +49,7 @@ jobs:
     - name: Build & push Docker image
       uses: mr-smithers-excellent/docker-build-push@v5
       with:
-        image: devendranathashok/my-microservice
+        image: ${{ secrets.DOCKERUSER }}/my-microservice
         tags: ${{ github.sha }}
         #tags: ${{ env.hash }}
         registry: docker.io
